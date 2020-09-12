@@ -21,11 +21,12 @@ class User(db.Model):
     def __init__(self, email, name, password):
         self.email = email
         self.name = name
-        self.password = Bcrypt().generate_password_hash(password).decode()
-        
+        self.password = Bcrypt().generate_password_hash(password).decode()        
     def password_is_valid(self, password):
         return Bcrypt().check_password_hash(self.password, password)
-
+    @classmethod
+    def find_by_email(self, email):
+        return self.query.filter_by(email = email).first()
     def save(self):
         db.session.add(self)
         db.session.commit()
