@@ -12,11 +12,14 @@ class UserLogin(Resource):
             self.parser.add_argument('password', help = 'This field cannot be blank', required = True)
     def post(self):
         data = self.parser.parse_args()
-        user_found = User.find_by_email(data['email'])
-        if (not user_found) or (not user_found.password_is_valid(data['password'])):
+        input_email = data['email']
+        input_password = data['password']
+        
+        autheticated = TraditionalAuth.find_by_email(input_email)
+        if (not autheticated) or (not autheticated.password_is_valid(input_password)):
             return error(500, "Credential Invalid")
-        access_token = create_access_token(identity = data['email'])
-        refresh_token = create_refresh_token(identity = data['email'])
+        access_token = create_access_token(identity = autheticated.id)
+        refresh_token = create_refresh_token(identity = autheticated.id)
         return(succefullAuthMessage('User Logged In Sucesfully', access_token, refresh_token))
 
         
