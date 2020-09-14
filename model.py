@@ -39,6 +39,11 @@ class SocialAuth(Column):
         self.social_id = social_id
         self.provider_id = provider_id
         self.provider_name = provider_name
+    @classmethod
+    def find_by_social_id(self, social_id):
+        return self.query.filter_by(social_id = social_id).first()
+    def getId(self):
+        return self.id
 class User(Column):
     __tablename__ = 'users'
     id = db.Column(db.String(230), nullable=False, primary_key = True)

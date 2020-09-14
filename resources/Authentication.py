@@ -1,4 +1,4 @@
-import sys
+import sys, requests
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
 from flask_restful import Resource, reqparse
 from src2.model import User, TraditionalAuth, SocialAuth
@@ -22,7 +22,35 @@ class UserLogin(Resource):
         refresh_token = create_refresh_token(identity = autheticated.id)
         return(succefullAuthMessage('User Logged In Sucesfully', access_token, refresh_token))
 
+class SocialLogin(Resource):
+    def __init__(self):
+        self.parser = reqparse.RequestParser()
+        self.parser.add_argument('token', help = 'This field cannot be blank', required = True)
+
+    def post(self):
+        data = self.parser.parse_args()
+        input_token = data['token']
+        if not input_token:
+            return error(500, 'Token is Empty')
+
+        request_url = 'https://graph.facebook.com/me?access_token=' + input_token
+        social_vendor_verify = requests.get(request_url).json()
+
+        if SocialAuth.find_by_social_id(social_vendor_verify['id']):
+            return succefullAuthMessage("Success", 's', "s")
         
+        Auth = SocialAuth(social_vendor_verify['id'], 1, 'Facebook')
+        try:
+            Auth.save()
+            user = User(str(Auth.getId()), input_name)
+            user.save()
+            access_token = create_access_token(identity = user.id)
+            refresh_token = create_refresh_token(identity = user.id)
+            return(succefullAuthMessage('User Created Sucesfully', access_token, refresh_token))
+        except:
+            print(error(500, sys.exc_info()[0]))
+            raise
+
 class UserRegistration(Resource):
     def __init__(self):
             self.parser = reqparse.RequestParser()
