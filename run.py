@@ -5,9 +5,6 @@ from flask_jwt_extended import JWTManager
 
 
 
-currentdir = os.path.dirname(os.path.realpath(__file__))
-parentdir = os.path.dirname(currentdir)
-sys.path.append(parentdir)
 app = Flask(__name__)
 
 def create_app(config_filename):
@@ -17,6 +14,9 @@ def create_app(config_filename):
     app.register_blueprint(api_bp, url_prefix='/api')
     db.init_app(app)
     jwt = JWTManager(app)
+    currentdir = os.path.dirname(os.path.realpath(__file__))
+    parentdir = os.path.dirname(currentdir)
+    sys.path.append(parentdir)
     return app
 
 
