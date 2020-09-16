@@ -1,8 +1,8 @@
 import sys, requests
 from flask_jwt_extended import (create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, get_raw_jwt)
 from flask_restful import Resource, reqparse
-from src2.model import User, TraditionalAuth, SocialAuth
-from src2.util.errorsAndMessages import error, succefullAuthMessage
+from model import User, TraditionalAuth, SocialAuth
+from util.errorsAndMessages import error, succefullAuthMessage
 
 #Initializers and Global Constant
 class UserLogin(Resource):

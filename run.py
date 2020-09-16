@@ -1,6 +1,5 @@
 from flask import Flask
 from model import db
-from config import Config
 import os, sys
 from flask_jwt_extended import JWTManager
 
@@ -22,5 +21,5 @@ def create_app(config_filename):
 
 
 if __name__ == "__main__":
-    app = create_app(Config)
+    app = create_app("config")
     app.run(debug=True)
