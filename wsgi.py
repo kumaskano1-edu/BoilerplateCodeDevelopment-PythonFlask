@@ -1,4 +1,5 @@
 from run import create_app, app
+app = create_app("config")
+
 if __name__ == "__main__":
-  app = create_app("config")
-  app.run()
+  app.run(use_debugger=True)
