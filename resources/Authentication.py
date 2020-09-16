@@ -37,12 +37,19 @@ class SocialLogin(Resource):
         social_vendor_verify = requests.get(request_url).json()
 
         if SocialAuth.find_by_social_id(social_vendor_verify['id']):
-            return succefullAuthMessage("Success", 's', "s")
+            access_token = create_access_token(identity = social_vendor_verify['id'])
+            refresh_token = create_refresh_token(identity = social_vendor_verify['id'])
+            return succefullAuthMessage("User Logged In Sucesfully", access_token, refresh_token)
         
-        Auth = SocialAuth(social_vendor_verify['id'], 1, 'Facebook')
+        authed_user = SocialAuth(social_vendor_verify['id'], 1, 'Facebook')
+
+        #checking the length of the name, and assigning the result to the var input_name
+        if len(social_vendor_verify["name"]) > 1: input_name = social_vendor_verify["name"].split()[0]
+        else: input_name = social_vendor_verify["name"]
+
         try:
-            Auth.save()
-            user = User(str(Auth.getId()), input_name)
+            authed_user.save()
+            user = User(str(authed_user.getId()), input_name)
             user.save()
             access_token = create_access_token(identity = user.id)
             refresh_token = create_refresh_token(identity = user.id)
